@@ -6,7 +6,7 @@ import dashboardRouter from './routes/dashboard';
 
 dotenv.config();
 const app: Application = express();
-const db = new Database();
+const db: Database = new Database();
 
 // Initialize connection to database.
 db.connect();
