@@ -1,47 +1,39 @@
-import passportLocal from 'passport-local';
+/**
+ * https://github.com/microsoft/TypeScript-Node-Starter/blob/master/src/config/passport.ts
+ */
 import bcrypt from 'bcrypt';
+import { PassportStatic } from 'passport';
+import passportLocal from 'passport-local';
 
 import User, { IUser } from '../models/User';
-import { PassportStatic } from 'passport';
 
 const LocalStrategy = passportLocal.Strategy;
 
-const initialize = (passport: PassportStatic) => {
-  const authenticateUser = async (
+const initializePassport = (passport: PassportStatic) => {
+  const authenticateUser = (
     email: string,
     password: string,
     done: (...args: any[]) => any
-  ) => {
-    try {
-      const user = await User.findOne({ email });
+  ): void => {
+    User.findOne({ email }, (err, user) => {
+      if (err) { return done(err); }
 
-      // No user found.
-      if (!user) {
-        return done(null, false, { msg: `USER_NOT_FOUND` });
-      }
+      // User not found.
+      if (!user) { return done(null, false, { msg: `USER_NOT_FOUND` }); }
 
       // Check for password validity.
-      const passwordValid = bcrypt.compare(password, user.password);
+      bcrypt.compare(password, user.password, (err: Error, passwordValid: boolean) => {
+        if (err) { return done(err); }
 
-      // Invalid password.
-      if (!passwordValid) {
-        return done(null, false, { msg: `INVALID_PASSWORD` });
-      }
-
-      // Valid user.
-      return done(null, user);
-    } catch (err) {
-      return done(err);
-    }
+        return passwordValid ? done(null, user) : done(null, false, { msg: `INVALID_PASSWORD` });
+      });
+    });
   };
 
   passport.use(new LocalStrategy({ usernameField: `email` }, authenticateUser));
-  passport.serializeUser<any, any>((user: IUser, done) => done(null, user._id));
-  passport.deserializeUser((id, done) => {
-    User.findById(id, (err, user) => {
-      done(err, user);
-    });
+  passport.serializeUser((user: IUser, done) => done(null, user._id));
+  passport.deserializeUser((id, done) => { User.findById(id, (err, user) => { done(err, user); });
   });
 };
 
-export default initialize;
+export default initializePassport;
