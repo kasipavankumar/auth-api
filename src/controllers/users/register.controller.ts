@@ -17,17 +17,11 @@ const handleUserRegister = async (req: Request, res: Response) => {
     return res.status(400).send(`USER_REGISTERED`);
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  const user = new User({
-    name,
-    email,
-    password: hashedPassword,
-  });
-
   try {
-    await user.save();
-    res.send({ user: user._id });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = await User.create({ name, email, password: hashedPassword });
+
+    res.send({ user: newUser._id });
   } catch (err) {
     res.status(400).send(err);
   }

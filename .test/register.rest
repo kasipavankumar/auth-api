@@ -8,3 +8,25 @@ Content-Type: application/json
 }
 
 ###
+
+POST http://localhost:4000/api/users/register
+Content-Type: application/json
+
+{
+    "name": "auth-guru",
+    "email": "auth-guru@email.com",
+    "password": "1234567"
+}
+
+###
+
+POST http://localhost:4000/api/users/register
+Content-Type: application/json
+
+{
+    "name": "auth-kmaddy",
+    "email": "auth-kmaddy@email.com",
+    "password": "superSecretPassword"
+}
+
+###

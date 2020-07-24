@@ -7,26 +7,31 @@ import { validateLoginCredentials } from '../../services/validation';
 
 const handleUserLogin = async (req: Request, res: Response) => {
   const { email, password } = req.body;
-  const { error } = validateLoginCredentials(req.body);
+  const validationError = validateLoginCredentials(req.body).error;
 
-  if (error) {
-    return res.status(400).send(error.details[0].message);
+  if (validationError) {
+    return res.status(400).send(validationError.details[0].message);
   }
 
-  const registeredUser = await User.findOne({ email });
+  try {
+    const registeredUser = await User.findOne({ email });
 
-  if (!registeredUser) {
-    return res.status(400).send(`USER_NOT_FOUND`);
+    if (!registeredUser) {
+      return res.status(400).send(`USER_NOT_FOUND`);
+    }
+
+    const passwordMatches = await bcrypt.compare(password, registeredUser.password);
+
+    if (!passwordMatches) {
+      return res.status(401).send(`INVALID_PASSWORD`);
+    }
+
+    const token = jwt.sign({ _id: registeredUser._id }, process.env.TOKEN_SECRET || ``);
+    res.header('auth-token', token).send(token);
+  } catch (err) {
+    console.error(err);
+    return res.status(400).send(`SOMETHING_WENT_WRONG`);
   }
-
-  const passwordMatches = await bcrypt.compare(password, registeredUser.password);
-
-  if (!passwordMatches) {
-    return res.status(401).send(`INVALID_PASSWORD`);
-  }
-
-  const token = jwt.sign({ _id: registeredUser._id }, process.env.TOKEN_SECRET || ``);
-  res.header('auth-token', token).send(token);
 };
 
 export default handleUserLogin;
