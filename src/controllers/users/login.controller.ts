@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import { getToken } from '../../services/authenticate';
 import User from '../../models/User';
 import { validateLoginCredentials } from '../../services/validation';
+import validateCredentials from '../../services/validateCredentials';
 
 /* const handleUserLogin = async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -34,12 +35,15 @@ import { validateLoginCredentials } from '../../services/validation';
   }
 }; */
 
+// If written using composing, the function should be like: validateUser(checkPasswordValidity, checkRegistrationStatus, validateCredentials)
 const handleUserLogin = async (req: Request, res: Response) => {
   const validationError = validateLoginCredentials(req.body).error;
 
   if (validationError) {
     return res.status(400).send(validationError.details[0].message);
   }
+
+  console.log(validateCredentials(`LOGIN`)(req));
 
   const { email, password } = req.body;
   User.findOne({ email }).then((user) => {
