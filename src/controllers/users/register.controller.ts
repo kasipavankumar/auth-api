@@ -14,7 +14,7 @@ const handleUserRegister = async (req: Request, res: Response) => {
   }
 
   if (await userRegistered(email)) {
-    return res.status(400).send(`USER_REGISTERED`);
+    return res.status(400).send(`USER_ALREADY_REGISTERED`);
   }
 
   try {

@@ -21,6 +21,7 @@
     "mongodb": "^3.5.9",
     "mongoose": "^5.9.25",
     "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0"
   },
   "devDependencies": {
@@ -33,6 +34,7 @@
     "@types/mongodb": "^3.5.25",
     "@types/mongoose": "^5.7.32",
     "@types/passport": "^1.0.4",
+    "@types/passport-jwt": "^3.0.3",
     "@types/passport-local": "^1.0.33",
     "chalk-animation": "^1.6.0",
     "nodemon": "^2.0.4",
