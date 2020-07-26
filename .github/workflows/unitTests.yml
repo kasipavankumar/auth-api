@@ -2,19 +2,21 @@ name: Unit Tests
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-      
-    - name: Install Dependencies
-      run: npm install
-      
-    - name: Run the test suites
-      run: npm run test
+      - uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run the test suites
+        env:
+          JWT_TOKEN_SECRET: ${{ secrets.JWT_TOKEN_SECRET }}
+        run: npm run test
