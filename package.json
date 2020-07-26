@@ -12,7 +12,7 @@
     "dev": "nodemon src/server.ts",
     "build": "tsc -p .",
     "format": "prettier --write \"**/*.{js,jsx,json,ts,js}\"",
-    "test": "jest --coverage --verbose --forceExit"
+    "test": "jest --verbose --forceExit --runInBand --detectOpenHandles"
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
